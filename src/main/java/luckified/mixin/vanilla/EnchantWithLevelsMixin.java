@@ -47,8 +47,8 @@ public class EnchantWithLevelsMixin {
         int rolledLvl = this.randomLevel.generateInt(rand);
         boolean natMaxRoll = this.randomLevel.getMax()>this.randomLevel.getMin() && rolledLvl == (int) this.randomLevel.getMax();
 
-        float chance = (float) (ForgeConfigHandler.server.maxEnchantabilityLootBaseChance+ForgeConfigHandler.server.maxEnchantabilityLootPerLuck*playerLuck);
-        if(rand.nextFloat() < chance || natMaxRoll){
+        float yellowChance = (float) (ForgeConfigHandler.server.maxEnchantabilityLootBaseChance+ForgeConfigHandler.server.maxEnchantabilityLootPerLuck*playerLuck);
+        if(rand.nextFloat() < yellowChance || natMaxRoll){
             int goldLvl = (int) (this.randomLevel.getMax()+addedLvl*2+ForgeConfigHandler.server.addedEnchantabilityForMaxRollLoot);
 
             if(ForgeConfigHandler.server.changeItemColors) {
@@ -60,14 +60,19 @@ public class EnchantWithLevelsMixin {
 
             return EnchantmentHelper.addRandomEnchantment(rand, stack, goldLvl, this.isTreasure);
 
-        } else{
-            int greenLvl = rolledLvl+addedLvl;
+        } else {
+            float greenChance = (float) (ForgeConfigHandler.server.luckyLootBaseChance+ForgeConfigHandler.server.luckyLootPerLuck*playerLuck);
 
-            if(addedLvl > 0) {
+            if(addedLvl > 0 && rand.nextFloat() < greenChance) {
+                int greenLvl = rolledLvl+addedLvl;
+
                 if(ForgeConfigHandler.server.changeItemColors)
                     stack.setStackDisplayName(TextFormatting.GREEN + stack.getDisplayName());
+
                 return EnchantmentHelper.addRandomEnchantment(rand, stack, greenLvl, this.isTreasure);
-            } else  //Pregenerated loot or loot generated with no player luck
+            }
+
+            else  //Pregenerated loot or loot generated with no player luck
                 return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, this.isTreasure);
         }
 

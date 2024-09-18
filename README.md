@@ -40,8 +40,8 @@ If the loot is pregenerated or if the chest is opened without luck, the item wil
 
 In short:
 
-<span style="color:green">Green</span>: RolledLvl + Luck, Chance: 100% if player has luck
+<span style="color:green">Green</span>: RolledLvl + Luck, Chance: 50%+5% x Luck, slightly better than normal
 
-<span style="color:yellow">Yellow</span>: MaxLvl + 10, Chance: 5%
+<span style="color:yellow">Yellow</span>: MaxLvl + 10, Chance: 5%, good loot
 
-<span style="color:gold">Gold</span>: MaxLvl + 10 + 2x Luck, Chance: 5% + 2% x Luck 
+<span style="color:gold">Gold</span>: MaxLvl + 10 + 2x Luck, Chance: 5% + 2% x Luck, exceptional loot 

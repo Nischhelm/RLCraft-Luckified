@@ -20,9 +20,17 @@ public class ForgeConfigHandler {
 
 	public static class ServerConfig {
 
-		@Config.Comment("How many enchanting levels added per luck attribute to enchanted player generated loot, generating a GREEN weapon (default: 1.0). Disable with 0.0")
+		@Config.Comment("How many enchanting levels added per luck attribute to enchanted player generated loot, generating a GREEN item (default: 1.0). Disable with 0.0")
 		@Config.Name("Luck added enchantability on loot")
 		public double luckEnchantabilityLoot = 1.0;
+
+		@Config.Comment("Base chance to roll lucky loot, generating a GREEN item (default: 0.5). Disable with 0.0")
+		@Config.Name("Chance to roll lucky loot - base chance")
+		public double luckyLootBaseChance = 0.5;
+
+		@Config.Comment("Chance per luck to roll lucky loot, generating a GREEN item (default: 0.05). Disable with 0.0")
+		@Config.Name("Chance to roll lucky loot - per luck")
+		public double luckyLootPerLuck = 0.05;
 
 		@Config.Comment("Change colors of items that have rolled max enchantability or have generated with luck")
 		@Config.Name("Changed Item Colors")
@@ -32,11 +40,11 @@ public class ForgeConfigHandler {
 		@Config.Name("Added Enchantability on max roll loot")
 		public double addedEnchantabilityForMaxRollLoot = 10.0;
 
-		@Config.Comment("Base chance to roll max possible level for loot enchantability, generating a YELLOW or GOLD weapon (default: 0.05). Disable with 0.0")
+		@Config.Comment("Base chance to roll max possible level for loot enchantability, generating a YELLOW or GOLD item (default: 0.05). Disable with 0.0")
 		@Config.Name("Luck forces max level loot - base chance")
 		public double maxEnchantabilityLootBaseChance = 0.05;
 
-		@Config.Comment("Chance per Luck to roll max possible level for loot enchantability, generating a GOLD weapon (default: 0.02). Disable with 0.0")
+		@Config.Comment("Chance per Luck to roll max possible level for loot enchantability, generating a GOLD item (default: 0.02). Disable with 0.0")
 		@Config.Name("Luck forces max level loot - per luck")
 		public double maxEnchantabilityLootPerLuck = 0.02;
 
