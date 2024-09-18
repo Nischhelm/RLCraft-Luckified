@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "luckified.mixin.modded",
+  "refmap": "mixins.luckified.modded.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+  ],
+  "injectors": {
+    "maxShiftBy": 10
+  }
+}
