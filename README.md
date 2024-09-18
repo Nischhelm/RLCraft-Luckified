@@ -45,3 +45,5 @@ In short:
 <span style="color:yellow">Yellow</span>: MaxLvl + 10, Chance: 5%, good loot
 
 <span style="color:gold">Gold</span>: MaxLvl + 10 + 2x Luck, Chance: 5% + 2% x Luck, exceptional loot 
+
+Check the pictures here in main folder for some distributions of the rolled lvls for the different gear tiers.
