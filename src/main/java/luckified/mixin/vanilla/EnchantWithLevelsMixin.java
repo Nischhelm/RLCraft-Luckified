@@ -61,19 +61,21 @@ public class EnchantWithLevelsMixin {
             return EnchantmentHelper.addRandomEnchantment(rand, stack, goldLvl, this.isTreasure);
 
         } else {
-            float greenChance = (float) (ForgeConfigHandler.server.luckyLootBaseChance+ForgeConfigHandler.server.luckyLootPerLuck*playerLuck);
+            if(addedLvl > 0) {
+                float greenChance = (float) (ForgeConfigHandler.server.luckyLootBaseChance + ForgeConfigHandler.server.luckyLootPerLuck * playerLuck);
 
-            if(addedLvl > 0 && rand.nextFloat() < greenChance) {
-                int greenLvl = rolledLvl+addedLvl;
+                if (rand.nextFloat() < greenChance) {
+                    int greenLvl = rolledLvl + addedLvl;
 
-                if(ForgeConfigHandler.server.changeItemColors)
-                    stack.setStackDisplayName(TextFormatting.GREEN + stack.getDisplayName());
+                    if (ForgeConfigHandler.server.changeItemColors)
+                        stack.setStackDisplayName(TextFormatting.GREEN + stack.getDisplayName());
 
-                return EnchantmentHelper.addRandomEnchantment(rand, stack, greenLvl, this.isTreasure);
+                    return EnchantmentHelper.addRandomEnchantment(rand, stack, greenLvl, this.isTreasure);
+                }
             }
 
-            else  //Pregenerated loot or loot generated with no player luck
-                return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, this.isTreasure);
+            //Pregenerated loot or loot generated with no player luck
+            return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, this.isTreasure);
         }
 
     }
