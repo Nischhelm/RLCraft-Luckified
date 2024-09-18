@@ -23,7 +23,7 @@ public class MimicLuckHandler {
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public void onRightClickPre(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getUseBlock() != Event.Result.DENY && !event.getWorld().isRemote && event.getEntityPlayer() != null && ModConfig.general.unlootedChestMimicRatio > 0.0) {
+        if (event.getUseBlock() != Event.Result.DENY && !event.getWorld().isRemote && event.getEntityPlayer() != null && ModConfig.general.unlootedChestMimicRatio > 0.0 && ForgeConfigHandler.server.luckMimicChance > 0.0) {
             BlockPos pos = event.getPos();
             World world = event.getWorld();
             TileEntity tile = world.getTileEntity(pos);
@@ -49,7 +49,7 @@ public class MimicLuckHandler {
 
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public void onBlockBreakPre(BlockEvent.BreakEvent event) {
-        if (!event.getWorld().isRemote && event.getPlayer() != null && ModConfig.general.unlootedChestMimicRatio > 0.0) {
+        if (!event.getWorld().isRemote && event.getPlayer() != null && ModConfig.general.unlootedChestMimicRatio > 0.0 && ForgeConfigHandler.server.luckMimicChance > 0.0) {
             BlockPos pos = event.getPos();
             World world = event.getWorld();
             TileEntity tile = world.getTileEntity(pos);
