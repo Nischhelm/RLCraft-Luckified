@@ -7,7 +7,9 @@
   "minVersion": "0.8",
   "mixins": [
     "ContainerEnchantmentMixin",
-    "EnchantWithLevelsMixin"
+    "EnchantWithLevelsMixin",
+    "LibrarianMixin",
+    "EntityVillagerMixin"
   ],
   "injectors": {
     "maxShiftBy": 10

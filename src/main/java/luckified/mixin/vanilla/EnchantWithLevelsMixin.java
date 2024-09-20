@@ -42,14 +42,15 @@ public class EnchantWithLevelsMixin {
             at = @At(value="INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;addRandomEnchantment(Ljava/util/Random;Lnet/minecraft/item/ItemStack;IZ)Lnet/minecraft/item/ItemStack;")
     )
     private ItemStack increaseLootEnchantLevelsMixin(Random rand, ItemStack stack, int level, boolean isTreasure){
-        int addedLvl = (int) (playerLuck * ForgeConfigHandler.server.luckEnchantabilityLoot);
 
         int rolledLvl = this.randomLevel.generateInt(rand);
         boolean natMaxRoll = this.randomLevel.getMax()>this.randomLevel.getMin() && rolledLvl == (int) this.randomLevel.getMax();
 
         float yellowChance = (float) (ForgeConfigHandler.server.maxEnchantabilityLootBaseChance+ForgeConfigHandler.server.maxEnchantabilityLootPerLuck*playerLuck);
-        if(rand.nextFloat() < yellowChance || natMaxRoll){
-            int goldLvl = (int) (this.randomLevel.getMax()+addedLvl*2+ForgeConfigHandler.server.addedEnchantabilityForMaxRollLoot);
+        if(rand.nextFloat() < yellowChance || natMaxRoll){  //Max roll Loot
+            int addedLvl = (int) (playerLuck * ForgeConfigHandler.server.luckEnchantabilityMaxLoot);
+
+            int goldLvl = (int) (this.randomLevel.getMax()+addedLvl+ForgeConfigHandler.server.addedEnchantabilityForMaxRollLoot);
 
             if(ForgeConfigHandler.server.changeItemColors) {
                 if (addedLvl > 0)
@@ -60,7 +61,9 @@ public class EnchantWithLevelsMixin {
 
             return EnchantmentHelper.addRandomEnchantment(rand, stack, goldLvl, this.isTreasure);
 
-        } else {
+        } else {    //Lucky Loot
+            int addedLvl = (int) (playerLuck * ForgeConfigHandler.server.luckEnchantabilityLoot);
+
             if(addedLvl > 0) {
                 float greenChance = (float) (ForgeConfigHandler.server.luckyLootBaseChance + ForgeConfigHandler.server.luckyLootPerLuck * playerLuck);
 
@@ -74,7 +77,7 @@ public class EnchantWithLevelsMixin {
                 }
             }
 
-            //Pregenerated loot or loot generated with no player luck
+            //Normal loot, pregenerated or generated with no player luck, not hitting max roll
             return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, this.isTreasure);
         }
 
