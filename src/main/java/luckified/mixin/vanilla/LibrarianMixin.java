@@ -36,10 +36,8 @@ public class LibrarianMixin {
 
             if (player == null) {
                 playerLuck = 0;
-                System.out.println("Testified null");
             } else {
                 playerLuck = player.getLuck();
-                player.sendMessage(new TextComponentString("Saved Customer"));
             }
         }
     }
