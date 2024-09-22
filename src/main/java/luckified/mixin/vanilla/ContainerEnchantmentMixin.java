@@ -2,7 +2,6 @@ package luckified.mixin.vanilla;
 
 import luckified.handlers.ForgeConfigHandler;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ContainerEnchantment;
 import net.minecraft.item.ItemStack;

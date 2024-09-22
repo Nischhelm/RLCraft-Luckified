@@ -6,6 +6,8 @@
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
+    "EnumBaubleModifierMixin",
+    "QualityTypeMixin"
   ],
   "injectors": {
     "maxShiftBy": 10

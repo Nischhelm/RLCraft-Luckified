@@ -13,7 +13,7 @@ public class RLCraftLuckifiedPlugin implements IFMLLoadingPlugin {
 		MixinBootstrap.init();
 		//False for Vanilla/Coremod mixins, true for regular mod mixins
 		FermiumRegistryAPI.enqueueMixin(false, "mixins.luckified.json");
-		//FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.modded.json");
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.modded.json");
 	}
 
 	@Override

@@ -9,7 +9,8 @@
     "ContainerEnchantmentMixin",
     "EnchantWithLevelsMixin",
     "LibrarianMixin",
-    "EntityVillagerMixin"
+    "EntityVillagerMixin",
+    "ContainerMixin"
   ],
   "injectors": {
     "maxShiftBy": 10

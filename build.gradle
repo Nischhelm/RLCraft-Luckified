@@ -72,8 +72,8 @@ dependencies {
 
     implementation fg.deobf("curse.maven:fermiumbooter-${fermiumbooter_version}")
 
-    //implementation fg.deobf("curse.maven:qualitytools-${qualitytools_version}")
-    //implementation fg.deobf("curse.maven:bountifulbaubles-${bountifulbaubles_version}")
+    implementation fg.deobf("curse.maven:qualitytools-${qualitytools_version}")
+    implementation fg.deobf("curse.maven:bountifulbaubles-${bountifulbaubles_version}")
     implementation fg.deobf("curse.maven:rlartifacts-${rlartifacts_version}")
 
 }

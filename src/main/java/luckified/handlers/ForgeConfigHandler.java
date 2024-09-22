@@ -67,7 +67,23 @@ public class ForgeConfigHandler {
 		@Config.Comment("Increase mimic spawn chance by this much per luck attribute (default: 0.001=0.1%). Disable with 0.0")
 		@Config.Name("RLArtifacts: Luck increased mimic spawn chance")
 		public double luckMimicChance = 0.001;
-    }
+
+		@Config.Comment("Increase weights for rare qualities by this much per luck attribute (default: 1.0). Disable with 0.0")
+		@Config.Name("QualityTools: Luck increased weights for rare Qualities")
+		public double rareQualityWeightPerLuck = 1.0;
+
+		@Config.Comment("Denote the quality weight which RLLuck will read as \"rare\" (default: 5)")
+		@Config.Name("QualityTools: Rare qualities")
+		public String[] rareQualityList = {"quality.masterful.name","quality.legendary.name","quality.undying.name","quality.punishing.name","quality.arcane.name","quality.mystical.name"};
+
+		@Config.Comment("Increase weights for rare modifiers by this much per luck attribute (default: 1.0). Disable with 0.0")
+		@Config.Name("BountifulBaubles: Luck increased weights for rare modifiers")
+		public double rareModifierWeightPerLuck = 0.2;
+
+		@Config.Comment("Denote the modifier names which RLLuck will read as \"rare\"")
+		@Config.Name("BountifulBaubles: Rare modifiers")
+		public String[] rareModifierList = {"armored","hearty","violent","menacing","quick"};
+	}
 
 	public static class ClientConfig {
 
