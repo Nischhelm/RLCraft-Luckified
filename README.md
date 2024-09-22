@@ -8,14 +8,12 @@ The players Luck Attribute will
 - Increase enchantability of (not pregenerated) loot gear (green items)
 - Change Weights on levels of Enchanted Book Trades on Librarians, giving higher lvl books with more luck
 - Increase chances to spawn a mimic
+- Increase weights on rare modifiers on Baubles (BountifulBaubles Reforging Station)
+- Increase weights on rare qualities on Items (QualityTools Reforging Station)
 
 The mod also adds rare loot (yellow or gold if also using luck) which will always roll the highest possible enchantability for that loot table.
 
 Fully configurable via config.
-
-#### Planned Features:
-- Increase weights on rare modifiers on Baubles (BountifulBaubles Reforging Station)
-- Increase weights on rare qualities on Items (QualityTools Reforging Station)
 
 #### Explanation of the Loot gear colors:
 
