@@ -2,6 +2,7 @@ package luckified.mixin.modded;
 
 import com.tmtravlr.qualitytools.config.QualityEntry;
 import com.tmtravlr.qualitytools.config.QualityType;
+import luckified.ModLoadedUtil;
 import luckified.handlers.ForgeConfigHandler;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.*;
@@ -33,10 +34,12 @@ public class QualityTypeMixin {
             remap = false
     )
     public void extractLuckMixin(ItemStack stack, boolean skipNormal, CallbackInfo ci){
-        if(stack.hasTagCompound())
-            this.playerLuck = stack.getTagCompound().getDouble("reforgingLuck");
-        else
-            this.playerLuck = 0.0;
+        if(ModLoadedUtil.isQualityToolsLoaded()) {
+            if (stack.hasTagCompound())
+                this.playerLuck = stack.getTagCompound().getDouble("reforgingLuck");
+            else
+                this.playerLuck = 0.0;
+        }
     }
 
     @Redirect(
@@ -45,13 +48,16 @@ public class QualityTypeMixin {
             remap = false
     )
     public int changeWeightsMixin(QualityEntry entry){
-        double wf = ForgeConfigHandler.server.rareQualityWeightPerLuck;
-        if(wf > 0.)
-            for(String rareName: ForgeConfigHandler.server.rareQualityList)
-                if(entry.name.equals(rareName))
-                    return (int) ((entry.weight + playerLuck*wf)/min(1.0,wf));
+        if(ModLoadedUtil.isQualityToolsLoaded()) {
+            double wf = ForgeConfigHandler.server.rareQualityWeightPerLuck;
+            if (wf > 0.)
+                for (String rareName : ForgeConfigHandler.server.rareQualityList)
+                    if (entry.name.equals(rareName))
+                        return (int) ((entry.weight + playerLuck * wf) / min(1.0, wf));
 
-        return (int) (entry.weight/min(1.0,wf));
+            return (int) (entry.weight / min(1.0, wf));
+        }
+        return 0;
     }
 
 }

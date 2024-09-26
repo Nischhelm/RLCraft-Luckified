@@ -1,6 +1,7 @@
 package luckified.mixin.modded;
 
 import cursedflames.bountifulbaubles.baubleeffect.EnumBaubleModifier;
+import luckified.ModLoadedUtil;
 import luckified.handlers.ForgeConfigHandler;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -31,10 +32,12 @@ public class EnumBaubleModifierMixin {
             remap = false
     )
     private static void extractLuckMixin(ItemStack stack, CallbackInfo ci){
-        if(stack.hasTagCompound())
-            playerLuck = stack.getTagCompound().getDouble("reforgingLuck");
-        else
-            playerLuck = 0.0;
+        if(ModLoadedUtil.isBountifulBaublesLoaded()) {
+            if (stack.hasTagCompound())
+                playerLuck = stack.getTagCompound().getDouble("reforgingLuck");
+            else
+                playerLuck = 0.0;
+        }
     }
 
     @Redirect(
@@ -43,13 +46,16 @@ public class EnumBaubleModifierMixin {
             remap = false
     )
     private static int changeWeightsMixin(EnumBaubleModifier instance){
-        double wf = ForgeConfigHandler.server.rareModifierWeightPerLuck;
-        if(wf > 0.)
-            for (String rareName : ForgeConfigHandler.server.rareModifierList)
-                if (instance.name.equals(rareName))
-                    return (int) ((instance.weight + playerLuck*wf)/min(1.0,wf));
+        if(ModLoadedUtil.isBountifulBaublesLoaded()) {
+            double wf = ForgeConfigHandler.server.rareModifierWeightPerLuck;
+            if (wf > 0.)
+                for (String rareName : ForgeConfigHandler.server.rareModifierList)
+                    if (instance.name.equals(rareName))
+                        return (int) ((instance.weight + playerLuck * wf) / min(1.0, wf));
 
-        return (int) (instance.weight/min(1.0,wf));
+            return (int) (instance.weight / min(1.0, wf));
+        }
+        return 0;
     }
 
     @Redirect(
@@ -58,27 +64,30 @@ public class EnumBaubleModifierMixin {
             remap = false
     )
     private static int changeTotalWeightsMixin(){
-        double wf = ForgeConfigHandler.server.rareModifierWeightPerLuck;
+        if(ModLoadedUtil.isBountifulBaublesLoaded()) {
+            double wf = ForgeConfigHandler.server.rareModifierWeightPerLuck;
 
-        if(wf > 0.) {
-            int total = 0;
+            if (wf > 0.) {
+                int total = 0;
 
-            for(EnumBaubleModifier mod: VALUES) {
-                boolean found = false;
-                for (String rareName : ForgeConfigHandler.server.rareModifierList){
-                    if (mod.name.equals(rareName)) {
-                        total += (int) ((mod.weight + playerLuck * wf)/min(1.0,wf));
-                        found = true;
+                for (EnumBaubleModifier mod : VALUES) {
+                    boolean found = false;
+                    for (String rareName : ForgeConfigHandler.server.rareModifierList) {
+                        if (mod.name.equals(rareName)) {
+                            total += (int) ((mod.weight + playerLuck * wf) / min(1.0, wf));
+                            found = true;
+                        }
                     }
+                    if (!found)
+                        total += (int) (mod.weight / min(1.0, wf));
                 }
-                if(!found)
-                    total+= (int) (mod.weight/min(1.0,wf));
+
+                return total;
             }
 
-            return total;
+            return TOTAL_WEIGHT;
         }
-
-        return TOTAL_WEIGHT;
+        return 0;
     }
 
 }

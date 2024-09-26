@@ -2,6 +2,7 @@ package luckified.mixin.vanilla;
 
 import com.tmtravlr.qualitytools.reforging.ContainerReforgingStation;
 import cursedflames.bountifulbaubles.block.ContainerReforger;
+import luckified.ModLoadedUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -21,11 +22,13 @@ public abstract class ContainerMixin {
             at = @At("RETURN")
     )
     public void addLuckMixin(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player, CallbackInfoReturnable<ItemStack> cir) {
-        Container container = ((Container)(Object)this);
-        if(container instanceof ContainerReforgingStation || container instanceof ContainerReforger) {
+        Container container = ((Container) (Object) this);
+        boolean qtLoaded = ModLoadedUtil.isQualityToolsLoaded();
+        boolean bbLoaded = ModLoadedUtil.isBountifulBaublesLoaded();
+        if ((qtLoaded && container instanceof ContainerReforgingStation) || (bbLoaded && container instanceof ContainerReforger)) {
             Slot slot = container.getSlot(0);
 
-            if(!slot.getStack().isEmpty()){
+            if (!slot.getStack().isEmpty()) {
                 ItemStack stack = slot.getStack();
                 double playerLuck = 0.0;
                 if (player != null) playerLuck = player.getLuck();
