@@ -23,9 +23,6 @@ public class EnchantWithLevelsMixin {
     @Final
     @Shadow
     private RandomValueRange randomLevel;
-    @Final
-    @Shadow
-    private boolean isTreasure;
 
     public double playerLuck = 0;
 
@@ -59,7 +56,7 @@ public class EnchantWithLevelsMixin {
                     stack.setStackDisplayName(TextFormatting.YELLOW + stack.getDisplayName());
             }
 
-            return EnchantmentHelper.addRandomEnchantment(rand, stack, goldLvl, this.isTreasure);
+            return EnchantmentHelper.addRandomEnchantment(rand, stack, goldLvl, isTreasure);
 
         } else {    //Lucky Loot
             int addedLvl = (int) (playerLuck * ForgeConfigHandler.server.luckEnchantabilityLoot);
@@ -73,12 +70,12 @@ public class EnchantWithLevelsMixin {
                     if (ForgeConfigHandler.server.changeItemColors)
                         stack.setStackDisplayName(TextFormatting.GREEN + stack.getDisplayName());
 
-                    return EnchantmentHelper.addRandomEnchantment(rand, stack, greenLvl, this.isTreasure);
+                    return EnchantmentHelper.addRandomEnchantment(rand, stack, greenLvl, isTreasure);
                 }
             }
 
             //Normal loot, pregenerated or generated with no player luck, not hitting max roll
-            return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, this.isTreasure);
+            return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, isTreasure);
         }
 
     }

@@ -7,6 +7,7 @@ public abstract class ModLoadedUtil {
 	private static Boolean qualityToolsLoaded = null;
 	private static Boolean bountifulBaublesLoaded = null;
 	private static Boolean rlArtifactsLoaded = null;
+	private static Boolean infernalmobsLoaded = null;
 
 	public static boolean isQualityToolsLoaded() {
 		if(qualityToolsLoaded == null) qualityToolsLoaded = Loader.isModLoaded("qualitytools");
@@ -21,6 +22,11 @@ public abstract class ModLoadedUtil {
 	public static boolean isRLArtifactsLoaded() {
 		if(rlArtifactsLoaded == null) rlArtifactsLoaded = Loader.isModLoaded("artifacts");
 		return rlArtifactsLoaded;
+	}
+
+	public static boolean isInfernalMobsLoaded() {
+		if(infernalmobsLoaded == null) infernalmobsLoaded = Loader.isModLoaded("infernalmobs");
+		return infernalmobsLoaded;
 	}
 
 }

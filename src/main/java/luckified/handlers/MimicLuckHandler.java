@@ -1,7 +1,6 @@
 package luckified.handlers;
 
 import artifacts.common.ModConfig;
-import artifacts.common.entity.EntityMimic;
 import luckified.ModLoadedUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
@@ -15,7 +14,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import artifacts.common.ModConfig.General;
 
 public class MimicLuckHandler {
 
@@ -32,7 +30,7 @@ public class MimicLuckHandler {
                 Block block = world.getBlockState(pos).getBlock();
                 EntityPlayer player = event.getEntityPlayer();
                 if (tile instanceof TileEntityChest && block instanceof BlockChest && !player.isSpectator()) {
-                    mimicChanceWithoutLuck = ModConfig.general.unlootedChestMimicRatio;
+                    //mimicChanceWithoutLuck = ModConfig.general.unlootedChestMimicRatio;
 
                     double addedChance = event.getEntityPlayer().getLuck() * ForgeConfigHandler.server.luckMimicChance;
                     ModConfig.general.unlootedChestMimicRatio += addedChance;
@@ -62,7 +60,7 @@ public class MimicLuckHandler {
                 Block block = world.getBlockState(pos).getBlock();
                 EntityPlayer player = event.getPlayer();
                 if (tile instanceof TileEntityChest && block instanceof BlockChest && !player.isSpectator()) {
-                    mimicChanceWithoutLuck = ModConfig.general.unlootedChestMimicRatio;
+                    //mimicChanceWithoutLuck = ModConfig.general.unlootedChestMimicRatio;
 
                     double addedChance = player.getLuck() * ForgeConfigHandler.server.luckMimicChance;
                     ModConfig.general.unlootedChestMimicRatio += addedChance;

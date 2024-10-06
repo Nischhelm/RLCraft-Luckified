@@ -83,6 +83,22 @@ public class ForgeConfigHandler {
 		@Config.Comment("Denote the modifier names which RLLuck will read as \"rare\"")
 		@Config.Name("BountifulBaubles: Rare modifiers")
 		public String[] rareModifierList = {"armored","hearty","violent","menacing","quick"};
+
+		@Config.Comment("Fix InfernalMobs mistakingly using material enchantability for the enchantability lvl")
+		@Config.Name("InfernalMobs Fix Loot Enchantability")
+		public boolean fixInfernalMobsEnchantability = true;
+
+		@Config.Comment("Enchantability range of Items dropped by rare (blue) InfernalMobs")
+		@Config.Name("InfernalMobs Rare Enchantability")
+		public int[] infernalMobsEnchantabilityElite = {10,20};
+
+		@Config.Comment("Enchantability range of Items dropped by ultra (yellow) InfernalMobs")
+		@Config.Name("InfernalMobs Ultra Enchantability")
+		public int[] infernalMobsEnchantabilityUltra = {20,30};
+
+		@Config.Comment("Enchantability range of Items dropped by infernal (gold) InfernalMobs")
+		@Config.Name("InfernalMobs Infernal Enchantability")
+		public int[] infernalMobsEnchantabilityInfernal = {30,50};
 	}
 
 	public static class ClientConfig {
