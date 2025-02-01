@@ -1,16 +1,14 @@
 package luckified.mixin.vanilla;
 
-import luckified.handlers.ForgeConfigHandler;
+import com.llamalad7.mixinextras.sugar.Local;
+import luckified.ModConfig;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.village.MerchantRecipeList;
+import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Random;
 import java.util.UUID;
@@ -18,53 +16,50 @@ import java.util.UUID;
 @Mixin(EntityVillager.ListEnchantedBookForEmeralds.class)
 public class LibrarianMixin {
 
-    @Unique
-    public double playerLuck = 0;
-
-    @Inject(
-            method="addMerchantRecipe",
-            at = @At(value="HEAD")
-    )
-    void savePlayerLuckMixin(IMerchant merchant, MerchantRecipeList recipeList, Random random, CallbackInfo ci){
-        UUID playerUUID = ((EntityVillagerMixin) merchant).getLastBuyingPlayer();
-        if(playerUUID != null) {
-            EntityPlayer player = merchant.getWorld().getPlayerEntityByUUID(playerUUID);
-
-            if (player == null) {
-                playerLuck = 0;
-            } else {
-                playerLuck = player.getLuck();
-            }
-        }
-    }
-
     @Redirect(
             method = "addMerchantRecipe",
-            at = @At(value="INVOKE", target = "Lnet/minecraft/util/math/MathHelper;getInt(Ljava/util/Random;II)I")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;getInt(Ljava/util/Random;II)I")
     )
-    private int changeLevelWeightsMixin(Random random, int minimum, int maximum){
-        if(maximum > minimum) {
-            //exponential weights: each level has a times wf higher probability than the one before
-            double wf = 1. + playerLuck*ForgeConfigHandler.server.librarianEnchLevelWeightFactor;
-            double sumweights = 0.;
-            double currweight = 1.;
-            for(int i=minimum; i<=maximum; i++){
-                sumweights += currweight;
-                currweight *= wf;
-            }
+    private int changeLevelWeights(Random rand, int minLvl, int maxLvl, @Local(argsOnly = true) IMerchant merchant) {
+        //Mechanic disabled
+        if(ModConfig.vanilla.librarianEnchLevelWeightFactor <= 0F) return MathHelper.getInt(rand,minLvl,maxLvl);
 
-            //weighted roll
-            double roll = random.nextFloat()*sumweights;
-            double weightCompare = 1.;
-            for(int i=minimum; i<=maximum; i++){
-                if(roll<weightCompare)
-                    return i;
-                else
-                    weightCompare += wf;
-            }
-            return maximum;
+        //No need to calc anything if the enchant only has one level
+        if (maxLvl <= minLvl) return minLvl;
+
+        //Get Luck of interacting player
+        float playerLuck = 0;
+        UUID playerUUID = ((EntityVillagerAccessor) merchant).getLastBuyingPlayer();
+        if (playerUUID != null) {
+            EntityPlayer player = merchant.getWorld().getPlayerEntityByUUID(playerUUID);
+            if (player != null) playerLuck = player.getLuck();
         }
-        //else
-        return minimum;
+
+        //No luck means we don't need to do any extra calcs
+        if (playerLuck <= 0) return MathHelper.getInt(rand, minLvl, maxLvl);
+
+        //Exponential weights in order to make each lvl x times more probable than the one before
+        //Default: every point of luck gives 10% higher chance per enchant lvl
+        float weightFromLuck = 1F + playerLuck * ModConfig.vanilla.librarianEnchLevelWeightFactor;
+
+        //Get total weights
+        float totalWeights = 0F;
+        float currFactor = 1F;
+        for (int lvl = minLvl; lvl <= maxLvl; lvl++) {
+            totalWeights += currFactor;
+            //Easier way to calc currFactor = weightFromLuck ^ (lvl - minLvl)
+            currFactor *= weightFromLuck;
+        }
+
+        //Weighted roll
+        float roll = rand.nextFloat() * totalWeights;
+        currFactor = 1F;
+        for (int lvl = minLvl; lvl <= maxLvl; lvl++) {
+            roll -= currFactor;
+            currFactor *= weightFromLuck;
+            if (roll < 0) return lvl;
+        }
+
+        return maxLvl;
     }
 }

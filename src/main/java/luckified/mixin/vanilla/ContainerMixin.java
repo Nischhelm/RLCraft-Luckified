@@ -1,14 +1,12 @@
 package luckified.mixin.vanilla;
 
-import com.tmtravlr.qualitytools.reforging.ContainerReforgingStation;
-import cursedflames.bountifulbaubles.block.ContainerReforger;
-import luckified.ModLoadedUtil;
+import luckified.util.ModLoadedUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagFloat;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,19 +19,17 @@ public abstract class ContainerMixin {
             method = "slotClick",
             at = @At("RETURN")
     )
-    public void addLuckMixin(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player, CallbackInfoReturnable<ItemStack> cir) {
+    public void addLuckToReforgers(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player, CallbackInfoReturnable<ItemStack> cir) {
         Container container = ((Container) (Object) this);
-        boolean qtLoaded = ModLoadedUtil.isQualityToolsLoaded();
-        boolean bbLoaded = ModLoadedUtil.isBountifulBaublesLoaded();
-        if ((qtLoaded && container instanceof ContainerReforgingStation) || (bbLoaded && container instanceof ContainerReforger)) {
+        if (ModLoadedUtil.containerIsQTReforger(container) || ModLoadedUtil.containerIsBBReforger(container)) {
             Slot slot = container.getSlot(0);
 
-            if (!slot.getStack().isEmpty()) {
+            if (slot.getHasStack()) {
                 ItemStack stack = slot.getStack();
-                double playerLuck = 0.0;
+                float playerLuck = 0F;
                 if (player != null) playerLuck = player.getLuck();
 
-                stack.setTagInfo("reforgingLuck", new NBTTagDouble(playerLuck));
+                stack.setTagInfo("reforgingLuck", new NBTTagFloat(Math.max(0F,playerLuck)));
             }
         }
     }

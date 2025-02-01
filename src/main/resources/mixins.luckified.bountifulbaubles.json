@@ -1,16 +1,12 @@
 {
   "required": true,
-  "package": "luckified.mixin.vanilla",
+  "package": "luckified.mixin.modded",
   "refmap": "mixins.luckified.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "target": "@env(DEFAULT)",
   "minVersion": "0.8",
   "mixins": [
-    "ContainerEnchantmentMixin",
-    "ContainerMixin",
-    "EnchantWithLevelsMixin",
-    "EntityVillagerMixin",
-    "LibrarianMixin"
+    "EnumBaubleModifierMixin"
   ],
   "injectors": {
     "maxShiftBy": 10

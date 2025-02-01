@@ -1,6 +1,7 @@
 package luckified.mixin.vanilla;
 
-import luckified.handlers.ForgeConfigHandler;
+import com.llamalad7.mixinextras.sugar.Local;
+import luckified.ModConfig;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
@@ -10,73 +11,75 @@ import net.minecraft.world.storage.loot.functions.EnchantWithLevels;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Random;
 
 @Mixin(EnchantWithLevels.class)
 public class EnchantWithLevelsMixin {
-
-    @Final
-    @Shadow
-    private RandomValueRange randomLevel;
-
-    public double playerLuck = 0;
-
-    @Inject(
-            method = "apply",
-            at = @At(value="HEAD")
-    )
-    private void saveLuckFromContextMixin(ItemStack stack, Random rand, LootContext context, CallbackInfoReturnable<ItemStack> cir){
-        playerLuck = context.getLuck();
-    }
+    @Final @Shadow private RandomValueRange randomLevel;
 
     @Redirect(
             method = "apply",
-            at = @At(value="INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;addRandomEnchantment(Ljava/util/Random;Lnet/minecraft/item/ItemStack;IZ)Lnet/minecraft/item/ItemStack;")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;addRandomEnchantment(Ljava/util/Random;Lnet/minecraft/item/ItemStack;IZ)Lnet/minecraft/item/ItemStack;")
     )
-    private ItemStack increaseLootEnchantLevelsMixin(Random rand, ItemStack stack, int level, boolean isTreasure){
+    private ItemStack increaseLootEnchantLevels(Random rand, ItemStack stack, int rolledLvl, boolean isTreasure, @Local(argsOnly = true) LootContext context) {
+        double playerLuck = context.getLuck();
 
-        int rolledLvl = this.randomLevel.generateInt(rand);
-        boolean natMaxRoll = this.randomLevel.getMax()>this.randomLevel.getMin() && rolledLvl == (int) this.randomLevel.getMax();
-
-        float yellowChance = (float) (ForgeConfigHandler.server.maxEnchantabilityLootBaseChance+ForgeConfigHandler.server.maxEnchantabilityLootPerLuck*playerLuck);
-        if(rand.nextFloat() < yellowChance || natMaxRoll){  //Max roll Loot
-            int addedLvl = (int) (playerLuck * ForgeConfigHandler.server.luckEnchantabilityMaxLoot);
-
-            int goldLvl = (int) (this.randomLevel.getMax()+addedLvl+ForgeConfigHandler.server.addedEnchantabilityForMaxRollLoot);
-
-            if(ForgeConfigHandler.server.changeItemColors) {
-                if (addedLvl > 0)
-                    stack.setStackDisplayName(TextFormatting.GOLD + stack.getDisplayName());
-                else  //Pregenerated loot or loot generated with no player luck
-                    stack.setStackDisplayName(TextFormatting.YELLOW + stack.getDisplayName());
-            }
-
-            return EnchantmentHelper.addRandomEnchantment(rand, stack, goldLvl, isTreasure);
-
-        } else {    //Lucky Loot
-            int addedLvl = (int) (playerLuck * ForgeConfigHandler.server.luckEnchantabilityLoot);
-
-            if(addedLvl > 0) {
-                float greenChance = (float) (ForgeConfigHandler.server.luckyLootBaseChance + ForgeConfigHandler.server.luckyLootPerLuck * playerLuck);
-
-                if (rand.nextFloat() < greenChance) {
-                    int greenLvl = rolledLvl + addedLvl;
-
-                    if (ForgeConfigHandler.server.changeItemColors)
-                        stack.setStackDisplayName(TextFormatting.GREEN + stack.getDisplayName());
-
-                    return EnchantmentHelper.addRandomEnchantment(rand, stack, greenLvl, isTreasure);
-                }
-            }
-
-            //Normal loot, pregenerated or generated with no player luck, not hitting max roll
+        //Don't alter the level if EnchantWithLevels has a fixed level it rolls enchants with
+        if(this.randomLevel.getMin() == this.randomLevel.getMax())
             return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, isTreasure);
+
+        //Loot function rolled the max possible level naturally
+        boolean natMaxRoll = rolledLvl == (int) this.randomLevel.getMax();
+
+        //Max roll Loot (yellow/gold)
+        if (rand.nextFloat() < getChance(false, playerLuck) || natMaxRoll) {
+            //Always roll max
+            rolledLvl = (int) this.randomLevel.getMax();
+
+            //Add extra lvls on top
+            rolledLvl += ModConfig.vanilla.addedEnchantabilityForMaxRollLoot;
+
+            //Add even more lvls by luck
+            int addedLvlsByLuck = (int) (playerLuck * ModConfig.vanilla.luckEnchantabilityMaxLoot);
+            rolledLvl += addedLvlsByLuck;
+
+            if (ModConfig.vanilla.changeItemColors) {
+                //Max roll loot with added lvls from luck is gold
+                if (addedLvlsByLuck > 0) stack.setStackDisplayName(TextFormatting.GOLD + stack.getDisplayName());
+                //Pregenerated max roll loot or max roll loot generated with no player luck is yellow
+                else stack.setStackDisplayName(TextFormatting.YELLOW + stack.getDisplayName());
+            }
+        }
+        //Lucky Loot (green)
+        else {
+            int addedLvlsByLuck = (int) (playerLuck * ModConfig.vanilla.luckEnchantabilityLoot);
+
+            if (addedLvlsByLuck > 0 && rand.nextFloat() < getChance(true, playerLuck)) {
+                rolledLvl += addedLvlsByLuck;
+
+                if (ModConfig.vanilla.changeItemColors)
+                    stack.setStackDisplayName(TextFormatting.GREEN + stack.getDisplayName());
+            }
         }
 
+        return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, isTreasure);
+    }
+
+    @Unique
+    private static float getChance(boolean isGreen, double playerLuck){
+        float chance;
+        if(isGreen) {
+            chance = ModConfig.vanilla.luckyLootBaseChance;
+            chance += (float) (ModConfig.vanilla.luckyLootPerLuck * playerLuck);
+        }
+        else {
+            chance = ModConfig.vanilla.maxEnchantabilityLootBaseChance;
+            chance += (float) (ModConfig.vanilla.maxEnchantabilityLootPerLuck * playerLuck);
+        }
+        return chance;
     }
 }

@@ -3,13 +3,12 @@
 Adds more uses to Luck Attribute in RLCraft
 
 The players Luck Attribute will
-- Increase enchantability on enchanting table
-- Increase chance to see top enchant as clue in enchanting table
 - Increase enchantability of (not pregenerated) loot gear (green items)
 - Change Weights on levels of Enchanted Book Trades on Librarians, giving higher lvl books with more luck
 - Increase chances to spawn a mimic
 - Increase weights on rare modifiers on Baubles (BountifulBaubles Reforging Station)
 - Increase weights on rare qualities on Items (QualityTools Reforging Station)
+- Increase chances to breed a gold bookwyrm (default chances are multiplied by luck x configfactor)
 
 Other additions:
 - Fixed InfernalMobs mistakingly enchanting gear with Material Enchantability instead of a proper Enchanting Table level (InfernalMobs)

@@ -7,8 +7,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import java.util.UUID;
 
 @Mixin(EntityVillager.class)
-public interface EntityVillagerMixin {
-
+public interface EntityVillagerAccessor {
     @Accessor("lastBuyingPlayer")
-    public UUID getLastBuyingPlayer();
+    UUID getLastBuyingPlayer();
 }
