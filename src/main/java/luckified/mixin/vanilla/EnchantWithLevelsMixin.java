@@ -25,7 +25,7 @@ public class EnchantWithLevelsMixin {
             method = "apply",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;addRandomEnchantment(Ljava/util/Random;Lnet/minecraft/item/ItemStack;IZ)Lnet/minecraft/item/ItemStack;")
     )
-    private ItemStack increaseLootEnchantLevels(Random rand, ItemStack stack, int rolledLvl, boolean isTreasure, @Local(argsOnly = true) LootContext context) {
+    private ItemStack luckified_increaseLootEnchantLevels(Random rand, ItemStack stack, int rolledLvl, boolean isTreasure, @Local(argsOnly = true) LootContext context) {
         double playerLuck = context.getLuck();
 
         //Don't alter the level if EnchantWithLevels has a fixed level it rolls enchants with
@@ -36,7 +36,7 @@ public class EnchantWithLevelsMixin {
         boolean natMaxRoll = rolledLvl == (int) this.randomLevel.getMax();
 
         //Max roll Loot (yellow/gold)
-        if (rand.nextFloat() < getChance(false, playerLuck) || natMaxRoll) {
+        if (rand.nextFloat() < luckified$getChance(false, playerLuck) || natMaxRoll) {
             //Always roll max
             rolledLvl = (int) this.randomLevel.getMax();
 
@@ -58,7 +58,7 @@ public class EnchantWithLevelsMixin {
         else {
             int addedLvlsByLuck = (int) (playerLuck * ModConfig.vanilla.luckEnchantabilityLoot);
 
-            if (addedLvlsByLuck > 0 && rand.nextFloat() < getChance(true, playerLuck)) {
+            if (addedLvlsByLuck > 0 && rand.nextFloat() < luckified$getChance(true, playerLuck)) {
                 rolledLvl += addedLvlsByLuck;
 
                 if (ModConfig.vanilla.changeItemColors)
@@ -70,7 +70,7 @@ public class EnchantWithLevelsMixin {
     }
 
     @Unique
-    private static float getChance(boolean isGreen, double playerLuck){
+    private static float luckified$getChance(boolean isGreen, double playerLuck){
         float chance;
         if(isGreen) {
             chance = ModConfig.vanilla.luckyLootBaseChance;

@@ -15,24 +15,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.lang.Math.min;
-
 @Mixin(EnumBaubleModifier.class)
 public class EnumBaubleModifierMixin {
 
     @Shadow(remap = false) @Final private static int TOTAL_WEIGHT;
     @Shadow(remap = false) @Final private static List<EnumBaubleModifier> VALUES;
 
-    @Unique private static float playerLuck = 0F;
+    @Unique private static float luckified$playerLuck = 0F;
 
     @Inject(
             method = "generateModifier",
             at = @At(value = "HEAD"),
             remap = false
     )
-    private static void extractLuck(ItemStack stack, CallbackInfo ci) {
-        if (stack.hasTagCompound()) playerLuck = stack.getTagCompound().getFloat("reforgingLuck");
-        else playerLuck = 0F;
+    private static void luckified_extractLuck(ItemStack stack, CallbackInfo ci) {
+        if (stack.hasTagCompound()) luckified$playerLuck = stack.getTagCompound().getFloat("reforgingLuck");
+        else luckified$playerLuck = 0F;
     }
 
     @Redirect(
@@ -40,34 +38,37 @@ public class EnumBaubleModifierMixin {
             at = @At(value = "FIELD", target = "Lcursedflames/bountifulbaubles/baubleeffect/EnumBaubleModifier;weight:I"),
             remap = false
     )
-    private static int changeWeights(EnumBaubleModifier instance) {
-        return getLuckWeight(instance);
+    private static int luckified_changeWeights(EnumBaubleModifier instance) {
+        return luckified$getLuckWeight(instance);
     }
 
-    @Unique private static List<String> rareModifiers = Arrays.asList(ModConfig.bountifulBaubles.rareModifierList);
+    @Unique private static List<String> luckified$rareModifiers = null;
 
     @Redirect(
             method = "getWeightedRandom",
             at = @At(value = "FIELD", target = "Lcursedflames/bountifulbaubles/baubleeffect/EnumBaubleModifier;TOTAL_WEIGHT:I"),
             remap = false
     )
-    private static int changeTotalWeights() {
+    private static int luckified_changeTotalWeights() {
         if (ModConfig.bountifulBaubles.rareModifierWeightPerLuck <= 0F)
             return TOTAL_WEIGHT;
 
         int total = 0;
         for (EnumBaubleModifier mod : VALUES)
-            total += getLuckWeight(mod);
+            total += luckified$getLuckWeight(mod);
 
         return total;
     }
 
     @Unique
-    private static int getLuckWeight(EnumBaubleModifier mod) {
+    private static int luckified$getLuckWeight(EnumBaubleModifier mod) {
+        if(luckified$rareModifiers == null)
+            luckified$rareModifiers = Arrays.asList(ModConfig.bountifulBaubles.rareModifierList);
+
         float weightPerLuck = ModConfig.bountifulBaubles.rareModifierWeightPerLuck;
         //Dividing by weightPerLuck to not get truncation errors when its below 1
-        if (weightPerLuck > 0 && rareModifiers.contains(mod.name))
-            return (int) ((mod.weight + playerLuck * weightPerLuck) / Math.min(1F, weightPerLuck));
+        if (weightPerLuck > 0 && luckified$rareModifiers.contains(mod.name))
+            return (int) ((mod.weight + luckified$playerLuck * weightPerLuck) / Math.min(1F, weightPerLuck));
         else
             return (int) (mod.weight / Math.min(1F, weightPerLuck));
     }

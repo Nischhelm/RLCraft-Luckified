@@ -16,29 +16,32 @@ import java.util.List;
 @Mixin(QualityType.class)
 public class QualityTypeMixin {
 
-    @Unique public float playerLuck = 0F;
+    @Unique public float luckified$playerLuck = 0F;
 
     @Inject(
             method = "generateQualityTag",
             at = @At(value = "HEAD"),
             remap = false
     )
-    public void extractLuck(ItemStack stack, boolean skipNormal, CallbackInfo ci){
-        if (stack.hasTagCompound()) this.playerLuck = stack.getTagCompound().getFloat("reforgingLuck");
-        else this.playerLuck = 0F;
+    public void luckified_extractLuck(ItemStack stack, boolean skipNormal, CallbackInfo ci){
+        if (stack.hasTagCompound()) this.luckified$playerLuck = stack.getTagCompound().getFloat("reforgingLuck");
+        else this.luckified$playerLuck = 0F;
     }
 
-    @Unique private static List<String> rareQualities = Arrays.asList(ModConfig.qualityTools.rareQualityList);
+    @Unique private static List<String> luckified$rareQualities = null;
 
     @Redirect(
             method = "chooseQualityEntry",
             at = @At(value = "FIELD", target = "Lcom/tmtravlr/qualitytools/config/QualityEntry;weight:I"),
             remap = false
     )
-    public int changeWeights(QualityEntry entry){
+    public int luckified_changeWeights(QualityEntry entry){
+        if(luckified$rareQualities == null)
+            luckified$rareQualities = Arrays.asList(ModConfig.qualityTools.rareQualityList);
+
         float weightPerLuck = ModConfig.qualityTools.rareQualityWeightPerLuck;
-        if (weightPerLuck > 0. && rareQualities.contains(entry.name))
-            return (int) ((entry.weight + playerLuck * weightPerLuck) / Math.min(1F, weightPerLuck));
+        if (weightPerLuck > 0. && luckified$rareQualities.contains(entry.name))
+            return (int) ((entry.weight + luckified$playerLuck * weightPerLuck) / Math.min(1F, weightPerLuck));
         else
             return (int) (entry.weight / Math.min(1F, weightPerLuck));
     }

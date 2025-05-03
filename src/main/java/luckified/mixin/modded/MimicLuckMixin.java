@@ -15,8 +15,8 @@ public class MimicLuckMixin {
             at = @At(value = "FIELD", target = "Lartifacts/common/ModConfig$General;unlootedChestMimicRatio:D", ordinal = 1),
             remap = false
     )
-    private static double changeMimicChanceOnOpen(artifacts.common.ModConfig.General instance, @Local EntityPlayer player){
-        return instance.unlootedChestMimicRatio + getAddedLuckChance(player);
+    private static double luckified_changeMimicChanceOnOpen(artifacts.common.ModConfig.General instance, @Local EntityPlayer player){
+        return instance.unlootedChestMimicRatio + luckified$getAddedLuckChance(player);
     }
 
     @Redirect(
@@ -24,12 +24,12 @@ public class MimicLuckMixin {
             at = @At(value = "FIELD", target = "Lartifacts/common/ModConfig$General;unlootedChestMimicRatio:D", ordinal = 1),
             remap = false
     )
-    private static double changeMimicChanceOnBreak(artifacts.common.ModConfig.General instance, @Local EntityPlayer player){
-        return instance.unlootedChestMimicRatio + getAddedLuckChance(player);
+    private static double luckified_changeMimicChanceOnBreak(artifacts.common.ModConfig.General instance, @Local EntityPlayer player){
+        return instance.unlootedChestMimicRatio + luckified$getAddedLuckChance(player);
     }
 
     @Unique
-    private static double getAddedLuckChance(EntityPlayer player){
+    private static double luckified$getAddedLuckChance(EntityPlayer player){
         return player.getLuck() * ModConfig.rlArtifacts.luckMimicChance;
     }
 }

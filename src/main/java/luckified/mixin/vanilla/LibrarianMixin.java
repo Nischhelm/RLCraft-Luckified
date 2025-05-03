@@ -20,7 +20,7 @@ public class LibrarianMixin {
             method = "addMerchantRecipe",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;getInt(Ljava/util/Random;II)I")
     )
-    private int changeLevelWeights(Random rand, int minLvl, int maxLvl, @Local(argsOnly = true) IMerchant merchant) {
+    private int luckified_changeLevelWeights(Random rand, int minLvl, int maxLvl, @Local(argsOnly = true) IMerchant merchant) {
         //Mechanic disabled
         if(ModConfig.vanilla.librarianEnchLevelWeightFactor <= 0F) return MathHelper.getInt(rand,minLvl,maxLvl);
 

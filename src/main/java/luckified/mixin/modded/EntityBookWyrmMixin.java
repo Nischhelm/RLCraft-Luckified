@@ -17,14 +17,14 @@ public abstract class EntityBookWyrmMixin {
 
     @Shadow(remap = false) public abstract boolean isGolden();
 
-    @Unique private EntityPlayer lastInteractingPlayer = null;
+    @Unique private EntityPlayer luckified$lastInteractingPlayer = null;
 
     @Inject(
             method = "processInteract",
             at = @At("HEAD")
     )
-    public void saveLastInteractingPlayer(EntityPlayer player, EnumHand hand, CallbackInfoReturnable<Boolean> cir){
-        this.lastInteractingPlayer = player;
+    public void luckified_saveLastInteractingPlayer(EntityPlayer player, EnumHand hand, CallbackInfoReturnable<Boolean> cir){
+        this.luckified$lastInteractingPlayer = player;
     }
 
     @Inject(
@@ -32,20 +32,20 @@ public abstract class EntityBookWyrmMixin {
             at = @At(value = "INVOKE", target = "Llykrast/defiledlands/common/entity/passive/EntityBookWyrm;getDigestTime()I",ordinal = 0),
             remap = false
     )
-    public void increaseGoldChance(EntityBookWyrm parent, EntityBookWyrm child, CallbackInfo ci){
-        if(lastInteractingPlayer == null) return;
-        float luck = lastInteractingPlayer.getLuck();
+    public void luckified_increaseGoldChance(EntityBookWyrm parent, EntityBookWyrm child, CallbackInfo ci){
+        if(luckified$lastInteractingPlayer == null) return;
+        float luck = luckified$lastInteractingPlayer.getLuck();
         if(luck <= 0) return;
 
-        boolean isGold = child.getRNG().nextFloat() < getChildGoldChance(parent, luck);
+        boolean isGold = child.getRNG().nextFloat() < luckified$getChildGoldChance(parent, luck);
         child.setGolden(isGold);
 
         //Reset player, so no love arrow shenanigans
-        lastInteractingPlayer = null;
+        luckified$lastInteractingPlayer = null;
     }
 
     @Unique
-    private float getChildGoldChance(EntityBookWyrm parent, float luck) {
+    private float luckified$getChildGoldChance(EntityBookWyrm parent, float luck) {
         //Recreate DefiledLands rolling of gold Bookwyrms with additional luck
         boolean thisIsGold = this.isGolden();
         boolean parentIsGold = parent.isGolden();

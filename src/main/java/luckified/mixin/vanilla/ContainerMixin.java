@@ -19,7 +19,7 @@ public abstract class ContainerMixin {
             method = "slotClick",
             at = @At("RETURN")
     )
-    public void addLuckToReforgers(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player, CallbackInfoReturnable<ItemStack> cir) {
+    public void luckified_addLuckToReforgers(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player, CallbackInfoReturnable<ItemStack> cir) {
         Container container = ((Container) (Object) this);
         if (ModLoadedUtil.containerIsQTReforger(container) || ModLoadedUtil.containerIsBBReforger(container)) {
             Slot slot = container.getSlot(0);

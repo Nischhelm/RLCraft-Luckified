@@ -21,7 +21,7 @@ public class InfernalMobsMixin {
             index = 2,
             remap = false
     )
-    public int fixInfernalMobsEnchanting(int enchLvl, @Local(argsOnly = true) MobModifier mods, @Local(argsOnly = true) EntityLivingBase mob) {
+    public int luckified_fixInfernalMobsEnchanting(int enchLvl, @Local(argsOnly = true) MobModifier mods, @Local(argsOnly = true) EntityLivingBase mob) {
         if (!ModConfig.infernalmobs.fixInfernalMobsEnchantability) return enchLvl;
 
         Random rand = mob.world.rand;
