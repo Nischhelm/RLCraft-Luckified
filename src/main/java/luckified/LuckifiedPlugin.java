@@ -1,11 +1,12 @@
 package luckified;
 
-import java.util.Map;
 import fermiumbooter.FermiumRegistryAPI;
-import luckified.util.ModLoadedUtil;
+import luckified.util.EarlyConfigReader;
 import net.minecraftforge.fml.common.Loader;
-import org.spongepowered.asm.launch.MixinBootstrap;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import org.spongepowered.asm.launch.MixinBootstrap;
+
+import java.util.Map;
 
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 public class LuckifiedPlugin implements IFMLLoadingPlugin {
@@ -14,11 +15,11 @@ public class LuckifiedPlugin implements IFMLLoadingPlugin {
 		MixinBootstrap.init();
 
 		FermiumRegistryAPI.enqueueMixin(false, "mixins.luckified.vanilla.json");
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.infernalmobs.json", () -> Loader.isModLoaded("infernalmobs"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.bountifulbaubles.json", () -> Loader.isModLoaded("bountifulbaubles"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.qualitytools.json", () -> Loader.isModLoaded("qualitytools"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.rlartifacts.json", () -> Loader.isModLoaded("artifacts"));
-		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.defiledlands.json", () -> Loader.isModLoaded("defiledlands"));
+		FermiumRegistryAPI.enqueueMixin(false, "mixins.luckified.vanilla.librarians.json", () -> EarlyConfigReader.getDouble("Librarian: Weight factor for higher enchant levels per luck", ModConfig.vanilla.librarianEnchLevelWeightFactor) > 0);
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.bountifulbaubles.json", () -> Loader.isModLoaded("bountifulbaubles") && EarlyConfigReader.isArrayFilled("BountifulBaubles: Rare modifiers", true));
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.qualitytools.json", () -> Loader.isModLoaded("qualitytools") && EarlyConfigReader.isArrayFilled("QualityTools: Rare qualities", true));
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.rlartifacts.json", () -> Loader.isModLoaded("artifacts") && EarlyConfigReader.getDouble("RLArtifacts: Luck increased mimic spawn chance", ModConfig.rlArtifacts.luckMimicChance) > 0);
+		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.defiledlands.json", () -> Loader.isModLoaded("defiledlands") && EarlyConfigReader.getDouble("DefiledLands: Increased Gold Bookwyrm chance per Luck", ModConfig.defiledlands.goldWyrmPerLuck) > 0);
 	}
 
 	@Override

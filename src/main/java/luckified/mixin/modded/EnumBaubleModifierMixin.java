@@ -1,5 +1,7 @@
 package luckified.mixin.modded;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import cursedflames.bountifulbaubles.baubleeffect.EnumBaubleModifier;
 import luckified.ModConfig;
 import net.minecraft.item.ItemStack;
@@ -9,7 +11,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
@@ -33,23 +34,23 @@ public class EnumBaubleModifierMixin {
         else luckified$playerLuck = 0F;
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "getWeightedRandom",
             at = @At(value = "FIELD", target = "Lcursedflames/bountifulbaubles/baubleeffect/EnumBaubleModifier;weight:I"),
             remap = false
     )
-    private static int luckified_changeWeights(EnumBaubleModifier instance) {
+    private static int luckified_changeWeights(EnumBaubleModifier instance, Operation<Integer> original) {
         return luckified$getLuckWeight(instance);
     }
 
     @Unique private static List<String> luckified$rareModifiers = null;
 
-    @Redirect(
+    @WrapOperation(
             method = "getWeightedRandom",
             at = @At(value = "FIELD", target = "Lcursedflames/bountifulbaubles/baubleeffect/EnumBaubleModifier;TOTAL_WEIGHT:I"),
             remap = false
     )
-    private static int luckified_changeTotalWeights() {
+    private static int luckified_changeTotalWeights(Operation<Integer> original) {
         if (ModConfig.bountifulBaubles.rareModifierWeightPerLuck <= 0F)
             return TOTAL_WEIGHT;
 

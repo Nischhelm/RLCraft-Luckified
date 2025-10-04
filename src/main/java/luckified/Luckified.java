@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
         modid = Luckified.MODID,
         version = Luckified.VERSION,
         name = Luckified.NAME,
-        dependencies = "required-after:fermiumbooter",
+        dependencies = "required-after:fermiumbooter@[1.3.2,)",
         acceptableRemoteVersions = "*"
 )
 public class Luckified {

@@ -1,13 +1,15 @@
 package luckified.mixin.modded;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.tmtravlr.qualitytools.config.QualityEntry;
 import com.tmtravlr.qualitytools.config.QualityType;
 import luckified.ModConfig;
 import net.minecraft.item.ItemStack;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
@@ -30,20 +32,20 @@ public class QualityTypeMixin {
 
     @Unique private static List<String> luckified$rareQualities = null;
 
-    @Redirect(
+    @WrapOperation(
             method = "chooseQualityEntry",
             at = @At(value = "FIELD", target = "Lcom/tmtravlr/qualitytools/config/QualityEntry;weight:I"),
             remap = false
     )
-    public int luckified_changeWeights(QualityEntry entry){
+    public int luckified_changeWeights(QualityEntry entry, Operation<Integer> original){
         if(luckified$rareQualities == null)
             luckified$rareQualities = Arrays.asList(ModConfig.qualityTools.rareQualityList);
 
         float weightPerLuck = ModConfig.qualityTools.rareQualityWeightPerLuck;
         if (weightPerLuck > 0. && luckified$rareQualities.contains(entry.name))
-            return (int) ((entry.weight + luckified$playerLuck * weightPerLuck) / Math.min(1F, weightPerLuck));
+            return (int) ((original.call(entry) + luckified$playerLuck * weightPerLuck) / Math.min(1F, weightPerLuck));
         else
-            return (int) (entry.weight / Math.min(1F, weightPerLuck));
+            return (int) (original.call(entry) / Math.min(1F, weightPerLuck));
     }
 
 }

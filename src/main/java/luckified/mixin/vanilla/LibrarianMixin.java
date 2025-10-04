@@ -1,5 +1,7 @@
 package luckified.mixin.vanilla;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import luckified.ModConfig;
 import net.minecraft.entity.IMerchant;
@@ -8,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.Random;
 import java.util.UUID;
@@ -16,13 +17,13 @@ import java.util.UUID;
 @Mixin(EntityVillager.ListEnchantedBookForEmeralds.class)
 public class LibrarianMixin {
 
-    @Redirect(
+    @WrapOperation(
             method = "addMerchantRecipe",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;getInt(Ljava/util/Random;II)I")
     )
-    private int luckified_changeLevelWeights(Random rand, int minLvl, int maxLvl, @Local(argsOnly = true) IMerchant merchant) {
+    private int luckified_changeLevelWeights(Random rand, int minLvl, int maxLvl, Operation<Integer> original, @Local(argsOnly = true) IMerchant merchant) {
         //Mechanic disabled
-        if(ModConfig.vanilla.librarianEnchLevelWeightFactor <= 0F) return MathHelper.getInt(rand,minLvl,maxLvl);
+        if(ModConfig.vanilla.librarianEnchLevelWeightFactor <= 0F) return original.call(rand,minLvl,maxLvl);
 
         //No need to calc anything if the enchant only has one level
         if (maxLvl <= minLvl) return minLvl;
