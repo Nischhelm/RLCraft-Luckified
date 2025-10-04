@@ -62,6 +62,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:rlartifacts-${rlartifacts_version}")
     compileOnly fg.deobf("curse.maven:infernalmobs-${infernalmobs_version}")
     compileOnly fg.deobf("curse.maven:defiled-${defiled_version}")
+    compileOnly fg.deobf("curse.maven:so-many-enchantments-${sme_version}")
 
 }
 

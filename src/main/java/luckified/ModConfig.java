@@ -33,6 +33,10 @@ public class ModConfig {
 	@Config.Name("Defiled Lands")
 	public static DefiledLandsConfig defiledlands = new DefiledLandsConfig();
 
+	@Config.Comment("SME Options")
+	@Config.Name("So Many Enchantments")
+	public static SoManyEnchantmentsConfig somanyenchantments = new SoManyEnchantmentsConfig();
+
 	@MixinConfig(name = Luckified.MODID)
 	public static class InfernalMobsConfig {
 		@Config.Comment("Fix InfernalMobs mistakingly using material enchantability for the enchantability lvl")
@@ -113,7 +117,7 @@ public class ModConfig {
 		@MixinConfig.CompatHandling(
 				modid = "noexpensive",
 				desired = false,
-				reason = "Luckified option \"Loot: Changed Item Colors\" not fully compatible with NoExpensive, disable the config or remove NoExpensive. Otherwise items with colored name will behave weirdly in anvils."
+				reason = "Option not fully compatible with NoExpensive, disable the config or remove NoExpensive. Otherwise items with colored names will behave weirdly in anvils."
 		)
 		public boolean changeItemColors = true;
 
@@ -148,6 +152,18 @@ public class ModConfig {
 		@Config.Name("DefiledLands: Increased Gold Bookwyrm chance per Luck")
 		@Config.RangeDouble(min = 0)
 		public float goldWyrmPerLuck = 0.2F;
+	}
+
+	public static class SoManyEnchantmentsConfig {
+		@Config.Comment("Increases Enchanting Lvl with the Luck POTION EFFECT (not attribute) by this amount per lvl of the effect. Disable with 0")
+		@Config.Name("SME: Enchant Focus Modifier per Luck")
+		@Config.RangeDouble(min = 0)
+		public float luckEnchantingPowerModifier = 1;
+
+		@Config.Comment("Which operation to use for the SME enchant focus attribute modifier on luck potion")
+		@Config.Name("SME: Enchant Focus Operation")
+		@Config.RangeInt(min = 0, max = 2)
+		public int luckEnchantingPowerOperation = 0;
 	}
 
 	@Mod.EventBusSubscriber(modid = Luckified.MODID)
