@@ -17,7 +17,7 @@ minecraft {
 
     runs {
         client {
-            args "--username=InDev"
+            args "--username=Nischhelm"
 
             jvmArg "-Dfml.coreMods.load=${mixin_loader_class}"
             jvmArg "-Dmixin.hotSwap=true"
