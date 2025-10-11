@@ -7,7 +7,6 @@ import luckified.ModConfig;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -25,21 +24,21 @@ public class LibrarianMixin {
         //Mechanic disabled
         if(ModConfig.vanilla.librarianEnchLevelWeightFactor <= 0F) return original.call(rand,minLvl,maxLvl);
 
+        if(!(merchant instanceof EntityVillagerAccessor)) return original.call(rand,minLvl,maxLvl);
+
         //No need to calc anything if the enchant only has one level
         if (maxLvl <= minLvl) return minLvl;
 
         //Get Luck of interacting player
         float playerLuck = 0;
-        if (merchant instanceof EntityVillagerAccessor) {
-            UUID playerUUID = ((EntityVillagerAccessor) merchant).getLastBuyingPlayer();
-            if (playerUUID != null) {
-                EntityPlayer player = merchant.getWorld().getPlayerEntityByUUID(playerUUID);
-                if (player != null) playerLuck = player.getLuck();
-            }
+        UUID playerUUID = ((EntityVillagerAccessor) merchant).getLastBuyingPlayer();
+        if (playerUUID != null) {
+            EntityPlayer player = merchant.getWorld().getPlayerEntityByUUID(playerUUID);
+            if (player != null) playerLuck = player.getLuck();
         }
 
         //No luck means we don't need to do any extra calcs
-        if (playerLuck <= 0) return MathHelper.getInt(rand, minLvl, maxLvl);
+        if (playerLuck <= 0) return original.call(rand,minLvl,maxLvl);
 
         //Exponential weights in order to make each lvl x times more probable than the one before
         //Default: every point of luck gives 10% higher chance per enchant lvl
