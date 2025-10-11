@@ -148,7 +148,7 @@ public class ModConfig {
 	}
 
 	public static class DefiledLandsConfig {
-		@Config.Comment("Each point of luck will multiplicatively increase default chance to breed golden bookwyrm by this factor in percent. So with 5 Luck and Factor of 0.2, all default chances are increased by +100%, so multiplied by 2 (meaning 1% turns to 2%). Default: 0.2. Disable with 0.0")
+		@Config.Comment("Each point of luck will increase default chance to breed golden bookwyrms by this factor. So with 5 Luck and a factor of 0.2, all default chances are increased by 5x20% = +100%, so multiplied by 2 (meaning 1% turns to 2%, 4% to 8%, 10% to 20%). Default: 0.2. Disable with 0.0")
 		@Config.Name("DefiledLands: Increased Gold Bookwyrm chance per Luck")
 		@Config.RangeDouble(min = 0)
 		public float goldWyrmPerLuck = 0.2F;
