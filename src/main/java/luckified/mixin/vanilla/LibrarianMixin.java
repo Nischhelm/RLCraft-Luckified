@@ -30,10 +30,12 @@ public class LibrarianMixin {
 
         //Get Luck of interacting player
         float playerLuck = 0;
-        UUID playerUUID = ((EntityVillagerAccessor) merchant).getLastBuyingPlayer();
-        if (playerUUID != null) {
-            EntityPlayer player = merchant.getWorld().getPlayerEntityByUUID(playerUUID);
-            if (player != null) playerLuck = player.getLuck();
+        if (merchant instanceof EntityVillagerAccessor) {
+            UUID playerUUID = ((EntityVillagerAccessor) merchant).getLastBuyingPlayer();
+            if (playerUUID != null) {
+                EntityPlayer player = merchant.getWorld().getPlayerEntityByUUID(playerUUID);
+                if (player != null) playerLuck = player.getLuck();
+            }
         }
 
         //No luck means we don't need to do any extra calcs
