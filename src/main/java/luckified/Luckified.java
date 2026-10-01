@@ -3,14 +3,12 @@ package luckified;
 import luckified.util.SMECompatUtil;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.InvalidVersionSpecificationException;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Mod(
         modid = Luckified.MODID,
@@ -27,35 +25,12 @@ public class Luckified {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){
-        if(Loader.isModLoaded("somanyenchantments") && ModConfig.somanyenchantments.luckEnchantingPowerModifier > 0 && modIsAboveOrEqualVersion("somanyenchantments", "1.0.0"))
-            SMECompatUtil.registerEnchantFocusModifier();
-    }
-
-    //only works for mod versions of the pattern x.y.z.w.a.b.c
-    private static boolean modIsAboveOrEqualVersion(String modid, String compareVersion){
-        ModContainer modContainer = Loader.instance().getIndexedModList().get(modid);
-        if(modContainer == null){
-            Luckified.LOGGER.warn("Luckified: Mod versioning can't be compared for mod {}, mod isn't loaded", modid);
-            return false;
+        if(Loader.isModLoaded("somanyenchantments") && ModConfig.somanyenchantments.luckEnchantingPowerModifier > 0) {
+            ArtifactVersion smeVersion = Loader.instance().getIndexedModList().get("somanyenchantments").getProcessedVersion();
+            try {
+                if (VersionRange.createFromVersionSpec("[1.0.4,)").containsVersion(smeVersion))
+                    SMECompatUtil.registerEnchantFocusModifier();
+            } catch (InvalidVersionSpecificationException ignored){}
         }
-        String modVersion = modContainer.getVersion();
-        if(modVersion.equals(compareVersion)) return true;
-        if(!modVersion.matches("\\d+(\\.\\d+)*")){
-            Luckified.LOGGER.warn("Luckified: Mod versioning can't be compared for mod {}, version {}", modid, modVersion);
-            return false;
-        }
-        List<Integer> splitActual = Arrays.stream(modVersion.split("\\.")).map(Integer::parseInt).collect(Collectors.toList());
-        List<Integer> splitCompare = Arrays.stream(compareVersion.split("\\.")).map(Integer::parseInt).collect(Collectors.toList());
-        for(int i = 0; i < splitActual.size(); i++) {
-            if(i >= splitCompare.size()) return true; //assumes 1.0.1 > 1.0
-
-            int actualVersion = splitActual.get(i);
-            int compVersion = splitCompare.get(i);
-
-            if(actualVersion > compVersion) return true;
-            if(actualVersion < compVersion) return false;
-            //if(actualVersion == compVersion) continue;
-        }
-        return splitActual.size() >= splitCompare.size(); //assumes 1.0 < 1.0.1
     }
 }
