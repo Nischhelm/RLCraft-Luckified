@@ -31,7 +31,7 @@ public class EnchantWithLevelsMixin {
 
         //Don't alter the level if EnchantWithLevels has a fixed level it rolls enchants with
         if(this.randomLevel.getMin() == this.randomLevel.getMax())
-            return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, isTreasure);
+            return original.call(rand, stack, rolledLvl, isTreasure);
 
         //Loot function rolled the max possible level naturally
         boolean natMaxRoll = rolledLvl == (int) this.randomLevel.getMax();
@@ -67,7 +67,7 @@ public class EnchantWithLevelsMixin {
             }
         }
 
-        return EnchantmentHelper.addRandomEnchantment(rand, stack, rolledLvl, isTreasure);
+        return original.call(rand, stack, rolledLvl, isTreasure);
     }
 
     @Unique
