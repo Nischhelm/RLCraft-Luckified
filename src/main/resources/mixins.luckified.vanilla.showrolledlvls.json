@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "package": "luckified.mixin.vanilla.rolledlvltooltips",
+  "refmap": "mixins.luckified.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "mixins": [
+    "EnchantmentHelperMixin",
+    "ContainerEnchantmentMixin"
+  ],
+  "client": [
+    "ItemStackMixin"
+  ],
+  "mixinextras": {
+    "minVersion": "0.5.0"
+  }
+}

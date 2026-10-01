@@ -145,6 +145,15 @@ public class ModConfig {
 		@Config.Name("Librarian: Weight factor for higher enchant levels per luck")
 		@Config.RangeDouble(min = 0)
 		public float librarianEnchLevelWeightFactor = 0.1F;
+
+		@Config.Comment({
+				"This adds a tooltip of what enchanting level this item rolled when it was enchanted from loot functions or enchantment table.",
+				"Note that this is not the lvl 30 you see in enchanting table but the modified lvl built from that."
+		})
+		@Config.Name("Loot: Show rolled enchant lvl")
+		@Config.RequiresMcRestart
+		@MixinConfig.MixinToggle(earlyMixin = "mixins.luckified.vanilla.showrolledlvls.json", defaultValue = true)
+		public boolean enchLvlTooltip = true;
 	}
 
 	public static class DefiledLandsConfig {
