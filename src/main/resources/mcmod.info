@@ -5,11 +5,11 @@
     "description": "${mod_description}",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "https://www.curseforge.com/members/ReplaceMeAuthor/projects",
+    "url": "https://www.curseforge.com/members/Nischhelm/projects",
     "updateUrl": "",
     "authorList": ${mod_author},
   "credits": "",
   "logoFile": "",
-  "dependencies": []
+  "dependencies": ["fermiumbooter"]
   }
 ]
