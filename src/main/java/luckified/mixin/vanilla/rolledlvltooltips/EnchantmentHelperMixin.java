@@ -1,8 +1,6 @@
 package luckified.mixin.vanilla.rolledlvltooltips;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.Share;
-import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
@@ -10,7 +8,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
@@ -22,34 +19,28 @@ public abstract class EnchantmentHelperMixin {
     private static void luckified_trackOriginalLvl(
             CallbackInfoReturnable<List<EnchantmentData>> cir,
             @Local(argsOnly = true) int lvl,
-            @Share("originalLvl") LocalIntRef originalLvl
+            @Local(argsOnly = true) ItemStack stack
     ){
-        originalLvl.set(lvl);
+        NBTTagCompound luckified = new NBTTagCompound();
+        luckified.setInteger("enchLvl", lvl);
+        stack.setTagInfo("luckified", luckified);
     }
 
-    @ModifyArg(
-            method = "buildEnchantmentList",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;getEnchantmentDatas(ILnet/minecraft/item/ItemStack;Z)Ljava/util/List;")
-    )
-    private static int luckified_trackUsedLvls(
-            int modifiedLvl,
-            @Local(argsOnly = true) ItemStack stack,
-            @Share("originalLvl") LocalIntRef originalLvl
-    ) {
-        NBTTagCompound luckified = new NBTTagCompound();
-        luckified.setInteger("enchLvl", originalLvl.get());
+    @Inject(method = "getEnchantmentDatas", at = @At(value = "HEAD"))
+    private static void luckified_trackModifiedLvl(int modifiedLvl, ItemStack stack, boolean allowTreasure, CallbackInfoReturnable<List<EnchantmentData>> cir) {
+        NBTTagCompound nbt = stack.getTagCompound();
+        if(nbt == null || !nbt.hasKey("luckified")) return; //if some mod uses getEnchantmentDatas separately
+        NBTTagCompound luckified = nbt.getCompoundTag("luckified");
         luckified.setInteger("modifiedLvl", modifiedLvl);
-        stack.setTagInfo("luckified", luckified);
-        return modifiedLvl;
     }
 
     @Inject(method = "addRandomEnchantment", at = @At(value = "TAIL"))
-    private static void luckified_trackEnchanted(
+    private static void luckified_trackNotEnchanted(
             Random random, ItemStack stack, int level, boolean allowTreasure,
             CallbackInfoReturnable<ItemStack> cir
     ){
         NBTTagCompound nbt = stack.getTagCompound();
         if(nbt == null || !nbt.hasKey("luckified")) return;
-        nbt.getCompoundTag("luckified").setBoolean("enchanted", false);
+        nbt.getCompoundTag("luckified").setBoolean("enchanted", false); // not enchanted by enchanting table
     }
 }

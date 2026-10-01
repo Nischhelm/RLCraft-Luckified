@@ -154,6 +154,13 @@ public class ModConfig {
 		@Config.RequiresMcRestart
 		@MixinConfig.MixinToggle(earlyMixin = "mixins.luckified.vanilla.showrolledlvls.json", defaultValue = true)
 		public boolean enchLvlTooltip = true;
+
+		@Config.Comment({
+				"This simplifies the \"rolled enchant lvl\" tooltip to only show a single number, the effective level.",
+				"Default disabled as it might be confusing enchanting an item on lvl 30, but reading it was enchanted on anything between lvl 27 and lvl 39."
+		})
+		@Config.Name("Loot: Simplified enchant lvl tooltip")
+		public boolean simplifiedEnchLvlTooltip = false;
 	}
 
 	public static class DefiledLandsConfig {

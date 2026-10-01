@@ -3,11 +3,13 @@ package luckified.mixin.vanilla.rolledlvltooltips;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ContainerEnchantment;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ContainerEnchantment.class)
@@ -17,12 +19,24 @@ public class ContainerEnchantmentMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/EntityPlayer;onEnchant(Lnet/minecraft/item/ItemStack;I)V")
     )
     private void luckified_trackEnchanted(
-            EntityPlayer playerIn, int id,
             CallbackInfoReturnable<Boolean> cir,
             @Local(ordinal = 0) ItemStack stack
     ){
         NBTTagCompound nbt = stack.getTagCompound();
         if(nbt == null || !nbt.hasKey("luckified")) return;
         nbt.getCompoundTag("luckified").setBoolean("enchanted", true);
+    }
+
+    @Inject(
+            method = "onCraftMatrixChanged",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/ContainerEnchantment;getEnchantmentList(Lnet/minecraft/item/ItemStack;II)Ljava/util/List;", shift = At.Shift.AFTER)
+    )
+    private void luckified_removeIntermediateTag(CallbackInfo ci, @Local(ordinal = 0) ItemStack stack){
+        //This is to avoid stacks getting tags from just putting them into etable without actually enchanting
+        NBTTagCompound nbt = stack.getTagCompound();
+        if(nbt == null || !nbt.hasKey("luckified")) return;
+
+        nbt.removeTag("luckified");
+        if(nbt.isEmpty()) stack.setTagCompound(null);
     }
 }
