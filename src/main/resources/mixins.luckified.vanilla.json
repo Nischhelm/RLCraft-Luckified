@@ -8,8 +8,5 @@
   "mixins": [
     "ContainerMixin",
     "EnchantWithLevelsMixin"
-  ],
-  "injectors": {
-    "maxShiftBy": 10
-  }
+  ]
 }

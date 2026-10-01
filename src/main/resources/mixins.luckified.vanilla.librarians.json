@@ -8,8 +8,5 @@
   "mixins": [
     "EntityVillagerAccessor",
     "LibrarianMixin"
-  ],
-  "injectors": {
-    "maxShiftBy": 10
-  }
+  ]
 }
