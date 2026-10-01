@@ -21,8 +21,9 @@ minecraft {
             args "--username=Nischhelm"
 
             jvmArg "-Dfml.coreMods.load=${mixin_loader_class}"
-            jvmArg "-Dmixin.hotSwap=true"
+//            jvmArg "-Dmixin.hotSwap=true"
             jvmArg "-Dmixin.checks.interfaces=true"
+            jvmArg "-Dmixin.debug.export=true"
 
             workingDirectory project.file('run')
 
@@ -33,8 +34,9 @@ minecraft {
         server {
 
             jvmArg "-Dfml.coreMods.load=${mixin_loader_class}"
-            jvmArg "-Dmixin.hotSwap=true"
+//            jvmArg "-Dmixin.hotSwap=true"
             jvmArg "-Dmixin.checks.interfaces=true"
+            jvmArg "-Dmixin.debug.export=true"
 
             workingDirectory project.file('run')
 
@@ -99,37 +101,17 @@ processResources {
 
 jar {
     manifest {
-        def attr = [:]
-        attr['Specification-Title']         = mod_name
-        attr['Specification-Vendor']        = mod_author
-        attr['Specification-Version']       = '1'
-        attr['Implementation-Title']        = mod_name
-        attr['Implementation-Vendor']       = mod_author
-        attr['Implementation-Version']      = mod_version
-        attr['Implementation-Timestamp']    = new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        attr['FMLCorePlugin']               = mixin_loader_class
-        attr['FMLCorePluginContainsFMLMod'] = 'true'
-        attr['TweakClass']                  = 'org.spongepowered.asm.launch.MixinTweaker'
-        attr['ForceLoadAsMod'] = "true"
-
-        def currentTasks = gradle.startParameter.taskNames
-        if (currentTasks[0] == 'build' || currentTasks[0] == 'assemble')
-            attr['ForceLoadAsMod'] = "true"
-        attributes(attr)
-    }
-}
-
-tasks.register("copyReobfJar", Copy) {
-    dependsOn("reobfJar")
-
-    from(layout.buildDirectory.file("reobfJar/output.jar"))
-    into(layout.projectDirectory.dir("run/mods"))
-    rename("output.jar", "${mod_name}-${mod_version}.jar")
-}
-
-afterEvaluate {
-    tasks.matching { it.name.startsWith("reobfJar") }.configureEach {
-        finalizedBy("copyReobfJar")
+        attributes([
+                'Specification-Title':  mod_name,
+                'Specification-Vendor':  mod_author,
+                'Specification-Version':  '1',
+                'Implementation-Title':  mod_name,
+                'Implementation-Vendor':  mod_author,
+                'Implementation-Version':  mod_version,
+                'Implementation-Timestamp':  new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'FMLCorePlugin':  mixin_loader_class,
+                'FMLCorePluginContainsFMLMod':  true
+        ])
     }
 }
 

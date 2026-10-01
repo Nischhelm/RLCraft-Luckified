@@ -3,8 +3,11 @@ package luckified;
 import fermiumbooter.FermiumRegistryAPI;
 import luckified.util.EarlyConfigReader;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import org.apache.commons.lang3.StringUtils;
 import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.Map;
 
@@ -41,7 +44,12 @@ public class LuckifiedPlugin implements IFMLLoadingPlugin {
 	}
 	
 	@Override
-	public void injectData(Map<String, Object> data) { }
+	public void injectData(Map<String, Object> data) {
+		if (Boolean.FALSE.equals(data.get("runtimeDeobfuscationEnabled"))) {
+			MixinEnvironment.getDefaultEnvironment().setObfuscationContext("searge");
+			CoreModManager.getReparseableCoremods().removeIf(s -> StringUtils.containsIgnoreCase(s, "fermiumbooter"));
+		}
+	}
 	
 	@Override
 	public String getAccessTransformerClass()
