@@ -6,7 +6,6 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import org.apache.commons.lang3.StringUtils;
-import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.util.Map;
@@ -15,8 +14,6 @@ import java.util.Map;
 public class LuckifiedPlugin implements IFMLLoadingPlugin {
 
 	public LuckifiedPlugin() {
-		MixinBootstrap.init();
-
 		FermiumRegistryAPI.enqueueMixin(false, "mixins.luckified.vanilla.json");
 		FermiumRegistryAPI.enqueueMixin(false, "mixins.luckified.vanilla.librarians.json", () -> EarlyConfigReader.getDouble("Librarian: Weight factor for higher enchant levels per luck", ModConfig.vanilla.librarianEnchLevelWeightFactor) > 0);
 		FermiumRegistryAPI.enqueueMixin(true, "mixins.luckified.bountifulbaubles.json", () -> Loader.isModLoaded("bountifulbaubles") && EarlyConfigReader.isArrayFilled("BountifulBaubles: Rare modifiers", true));
