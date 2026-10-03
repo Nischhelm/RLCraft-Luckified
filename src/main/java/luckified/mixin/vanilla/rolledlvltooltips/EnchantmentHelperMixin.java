@@ -1,5 +1,7 @@
 package luckified.mixin.vanilla.rolledlvltooltips;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -15,15 +17,27 @@ import java.util.Random;
 
 @Mixin(EnchantmentHelper.class)
 public abstract class EnchantmentHelperMixin {
-    @Inject(method = "buildEnchantmentList", at = @At("HEAD"))
-    private static void luckified_trackOriginalLvl(
-            CallbackInfoReturnable<List<EnchantmentData>> cir,
-            @Local(argsOnly = true) int lvl,
-            @Local(argsOnly = true) ItemStack stack
+    @WrapMethod(method = "buildEnchantmentList")
+    private static List<EnchantmentData> luckified_trackOriginalLvl(
+            Random rand, ItemStack stack, int lvl, boolean allowTreasure,
+            Operation<List<EnchantmentData>> original
     ){
+        if(stack.getTagCompound() == null) stack.setTagCompound(new NBTTagCompound());
+        NBTTagCompound stackNBT = stack.getTagCompound();
+
         NBTTagCompound luckified = new NBTTagCompound();
         luckified.setInteger("enchLvl", lvl);
-        stack.setTagInfo("luckified", luckified);
+        stackNBT.setTag("luckified", luckified);
+
+        List<EnchantmentData> addedEnchs = original.call(rand, stack, lvl, allowTreasure);
+
+        //cleanup
+        if(addedEnchs.isEmpty()) {
+            stackNBT.removeTag("luckified");
+            if(stackNBT.isEmpty()) stack.setTagCompound(null);
+        }
+
+        return addedEnchs;
     }
 
     @Inject(method = "getEnchantmentDatas", at = @At(value = "HEAD"))
